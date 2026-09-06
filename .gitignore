@@ -1,0 +1,27 @@
+﻿# generated / local
+research/
+stock/
+tools/oat*/
+tools/*.zip
+tools/*.log
+build/
+runtime/
+dist/
+backups/
+tmp_*/
+*.log
+
+# OS / editor
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+*~
+.vscode/
+.idea/
+
+# sound encode scratch (keep Stream override for build)
+src/sound/music/
+src/sound/Stream/Music/Mission/zombie/mx_undone.wav
+src/sound/Stream/Music/Mission/zombie/mx_splash_screen.wav
+src/sound/stream/
