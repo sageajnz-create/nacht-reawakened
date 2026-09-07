@@ -127,18 +127,34 @@ purchase(station)
         {
             level.nr_eggs_playing = true;
             level.eggs = 1;
-            // Hard-stop WAVE_1 on the client first (fake musicState skip left wave fading under Stones).
+            // Retail loads stock map amb CSC (no eggs/SILENT). Developer/devmap can load ours.
+            // Play Stones via sound alias so normal mods-menu launches work without eggs musicState.
             setmusicstate("SILENT");
             wait(0.15);
-            setmusicstate("eggs");
+            if (isdefined(level.nr_eggs_ent))
+            {
+                level.nr_eggs_ent stopsounds();
+                level.nr_eggs_ent delete();
+            }
+            level.nr_eggs_ent = spawn("script_origin", (0, 0, 0));
+            // mx_nr_stones is shipped in the mod IWD soundaliases CSV + stream.
+            level.nr_eggs_ent playsound("mx_nr_stones");
             iprintlnbold("^3STONES & CHEESE^7 | Reggae forever");
-            println("NR: EGGS music start");
+            println("NR: EGGS music start (playsound mx_nr_stones)");
         }
         else
         {
             level.nr_eggs_playing = false;
             level.eggs = 0;
+            if (isdefined(level.nr_eggs_ent))
+            {
+                level.nr_eggs_ent stopsounds();
+                level.nr_eggs_ent delete();
+                level.nr_eggs_ent = undefined;
+            }
             setmusicstate("SILENT");
+            wait(0.05);
+            setmusicstate("WAVE_1");
             iprintlnbold("^3RADIO OFF^7");
             println("NR: EGGS music stop");
         }
