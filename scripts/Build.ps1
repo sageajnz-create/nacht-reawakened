@@ -29,7 +29,13 @@ try {
     }
     $song = Join-Path $source 'sound/Stream/Music/Mission/zombie/mx_nr_stones.wav'
     if (!(Test-Path -LiteralPath $song)) { throw "Missing Stones & Cheese stream: $song" }
-    foreach ($entry in @('sound/Stream/Music/Mission/zombie/mx_nr_stones.wav','sound/Stream/music/Mission/zombie/mx_nr_stones.wav')) {
+    # Canonical Stones path + mx_undone dual-case so stock musicAlias("mx_undone") resolves.
+    foreach ($entry in @(
+        'sound/Stream/Music/Mission/zombie/mx_nr_stones.wav',
+        'sound/Stream/music/Mission/zombie/mx_nr_stones.wav',
+        'sound/Stream/Music/Mission/zombie/mx_undone.wav',
+        'sound/Stream/music/Mission/zombie/mx_undone.wav'
+    )) {
         [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive, $song, $entry) | Out-Null
     }
 } finally { $archive.Dispose() }

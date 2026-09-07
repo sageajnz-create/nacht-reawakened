@@ -20,10 +20,9 @@ main()
   declareMusicState("WAVE_1"); 
 	musicAliasloop("mx_zombie_wave_1", 0, 4);	
 
-  // Stones & Cheese EE: dedicated mx_nr_stones stream (not stock mx_game_over). Stock transitionOut can
-  // fadeOutAndStopSound the oneshot id when leaving this state.
+  // Stones & Cheese EE: musicAlias must be a stock-known name (mx_nr_stones never registered). Use mx_undone + stream override; leave mx_game_over stock. SILENT still stops the oneshot.
   declareMusicState("eggs");
-	musicAlias("mx_nr_stones", 1);
+	musicAlias("mx_undone", 1);
 
   declareMusicState("SILENT");
 
