@@ -115,7 +115,7 @@ test_suite()
     before = self.score;
     self maps\nr_stations::purchase(level.nr_stations[5]);
     wait 1;
-    check(self hasweapon("nr_colt") && !self hasweapon("zombie_colt") && self.score == before-5000, "starting pistol upgrade and cost");
+    check(self hasweapon("nr_colt") && !self hasweapon("zombie_colt") && self.score == before-1250, "starting pistol upgrade and cost");
     check(self hasweapon("thompson") && self getweaponammoclip("thompson") == 7, "upgrade preserves the second weapon and its ammo");
     before = self.score;
     self maps\nr_stations::purchase(level.nr_stations[5]);
@@ -217,7 +217,7 @@ test_all_upgrades()
         before = self.score;
         self maps\nr_stations::purchase(level.nr_stations[5]);
         wait 1;
-        check(self hasweapon(upgraded) && !self hasweapon(gun) && self.score == before-5000, "upgrade transaction " + gun);
+        check(self hasweapon(upgraded) && !self hasweapon(gun) && self.score == before-1250, "upgrade transaction " + gun);
         check(self getcurrentweapon() == upgraded, "equip upgrade " + gun);
         self setweaponammoclip(upgraded, 0);
         drop = spawnstruct();

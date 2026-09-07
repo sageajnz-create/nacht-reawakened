@@ -13,9 +13,12 @@ upgrade()
         self iprintln("^3This weapon is already upgraded or cannot be upgraded");
         return;
     }
-    if (self.score < 5000)
+    cost = 1250;
+    if (isdefined(level.nr_pack_cost))
+        cost = level.nr_pack_cost;
+    if (self.score < cost)
     {
-        self iprintln("^1Pack-a-Punch costs 5000 points");
+        self iprintln("^1Pack-a-Punch costs " + cost + " points");
         return;
     }
     // Validate the replacement before charging or removing the original.
@@ -29,7 +32,7 @@ upgrade()
         self iprintln("^1Upgrade unavailable | Your weapon and points were kept");
         return;
     }
-    self maps\_zombiemode_score::minus_to_player_score(5000);
+    self maps\_zombiemode_score::minus_to_player_score(cost);
     self takeweapon(gun);
     self givemaxammo(upgraded);
     self setweaponammoclip(upgraded,weaponclipsize(upgraded));

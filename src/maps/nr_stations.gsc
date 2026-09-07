@@ -30,6 +30,7 @@ init()
     add("relay_a", "STARTING ROOM RELAY", 0, (200, -380, 48), 90, "zombie_power_lever", (1,0.8,0.35));
     add("relay_b", "HELP ROOM RELAY", 0, (1040, 830, 40), 270, "zombie_power_lever", (1,0.8,0.35));
     add("eggs", "STONES & CHEESE", 0, (130, -378, 4), 180, "static_berlin_ger_radio", (0.45,1,0.35));
+    level.nr_pack_cost = 1250;
 }
 
 add(id, label, cost, origin, yaw, model, color)
@@ -95,8 +96,6 @@ hint(station)
     if (id == "revive" && get_players().size == 1 && self.nr_revives >= 3)
         return "QUICK REVIVE | Solo limit reached";
     cost = station.cost;
-    if (id == "revive" && get_players().size > 1)
-        cost = 1500;
     if (id == "pack")
     {
         if (!isdefined(level.nr_upgrades[self getcurrentweapon()]))
@@ -184,8 +183,6 @@ purchase(station)
     if (id == "revive" && get_players().size == 1 && self.nr_revives >= 3)
         return;
     cost = station.cost;
-    if (id == "revive" && get_players().size > 1)
-        cost = 1500;
     if (self.score < cost)
     {
         self iprintln("^1Not enough points");
