@@ -17,8 +17,8 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 $iwd = Join-Path $release 'nacht_reawakened.iwd'
 $pendingIwd = Join-Path $root 'build/nacht_reawakened.pending.iwd'
 if (Test-Path -LiteralPath $pendingIwd) { Remove-Item -LiteralPath $pendingIwd }
-# Preserve the working release's two case variants of the streamed song.
-# Other src/sound files are encoding experiments, not runtime dependencies.
+# Pack dedicated Stones & Cheese stream (dual-case paths for WaW FS).
+# Other src/sound files are encode scratch; do not ship mx_game_over overrides.
 $archive = [IO.Compression.ZipFile]::Open($pendingIwd, [IO.Compression.ZipArchiveMode]::Create)
 try {
     $source = Join-Path $root 'src'
@@ -27,8 +27,9 @@ try {
         if ($relative.StartsWith('sound/', [StringComparison]::OrdinalIgnoreCase)) { continue }
         [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive, $file.FullName, $relative) | Out-Null
     }
-    $song = Join-Path $source 'sound/Stream/Music/Mission/zombie/mx_game_over.wav'
-    foreach ($entry in @('sound/Stream/Music/Mission/zombie/mx_game_over.wav','sound/Stream/music/Mission/zombie/mx_game_over.wav')) {
+    $song = Join-Path $source 'sound/Stream/Music/Mission/zombie/mx_nr_stones.wav'
+    if (!(Test-Path -LiteralPath $song)) { throw "Missing Stones & Cheese stream: $song" }
+    foreach ($entry in @('sound/Stream/Music/Mission/zombie/mx_nr_stones.wav','sound/Stream/music/Mission/zombie/mx_nr_stones.wav')) {
         [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive, $song, $entry) | Out-Null
     }
 } finally { $archive.Dispose() }

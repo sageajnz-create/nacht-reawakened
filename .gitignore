@@ -1,4 +1,4 @@
-﻿# generated / local
+# generated / local
 research/
 stock/
 tools/oat*/
@@ -20,7 +20,8 @@ Desktop.ini
 .vscode/
 .idea/
 
-# sound encode scratch (keep Stream/Music override for build)
+# sound encode scratch (keep mx_nr_stones Stream for build)
 src/sound/music/
 src/sound/Stream/Music/Mission/zombie/mx_undone.wav
 src/sound/Stream/Music/Mission/zombie/mx_splash_screen.wav
+src/sound/Stream/Music/Mission/zombie/mx_game_over.wav

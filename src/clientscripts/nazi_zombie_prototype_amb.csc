@@ -20,10 +20,10 @@ main()
   declareMusicState("WAVE_1"); 
 	musicAliasloop("mx_zombie_wave_1", 0, 4);	
 
-  // Remastered-style oneshot (not Aliasloop). Stock transitionOut can
+  // Stones & Cheese EE: dedicated mx_nr_stones stream (not stock mx_game_over). Stock transitionOut can
   // fadeOutAndStopSound the oneshot id when leaving this state.
   declareMusicState("eggs");
-	musicAlias("mx_game_over", 1);
+	musicAlias("mx_nr_stones", 1);
 
   declareMusicState("SILENT");
 
