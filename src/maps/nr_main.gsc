@@ -56,6 +56,12 @@ player_start()
     self setclientdvar("cg_fov",fov);
     self thread maps\nr_perks::watch_downs();
     self thread maps\nr_debug::watch();
+    cash = getdvarint("nr_cash");
+    if (cash > 0)
+    {
+        self maps\_zombiemode_score::add_to_player_score(cash);
+        self iprintlnbold("^3PLAYTEST CASH^7 | +" + cash);
+    }
     self thread interactions();
     wait 2;
     self iprintlnbold("^3NACHT REAWAKENED^7 | Restore power upstairs");
