@@ -33,8 +33,8 @@ try {
     foreach ($entry in @(
         'sound/Stream/Music/Mission/zombie/mx_nr_stones.wav',
         'sound/Stream/music/Mission/zombie/mx_nr_stones.wav',
-        'sound/Stream/Music/Mission/zombie/mx_undone.wav',
-        'sound/Stream/music/Mission/zombie/mx_undone.wav'
+        'sound/Stream/Music/Mission/zombie/mx_game_over.wav',
+        'sound/Stream/music/Mission/zombie/mx_game_over.wav'
     )) {
         [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive, $song, $entry) | Out-Null
     }

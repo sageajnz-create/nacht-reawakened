@@ -20,9 +20,9 @@ main()
   declareMusicState("WAVE_1"); 
 	musicAliasloop("mx_zombie_wave_1", 0, 4);	
 
-  // Stones & Cheese EE: musicAlias must be a stock-known name (mx_nr_stones never registered). Use mx_undone + stream override; leave mx_game_over stock. SILENT still stops the oneshot.
+  // Stones & Cheese EE: WaW only reliably stream-overrides stock mx_game_over for musicAlias. Stones ships on that stream; end_of_game uses round_over instead. SILENT still stops the oneshot.
   declareMusicState("eggs");
-	musicAlias("mx_undone", 1);
+	musicAlias("mx_game_over", 1);
 
   declareMusicState("SILENT");
 

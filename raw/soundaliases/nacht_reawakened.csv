@@ -1,5 +1,4 @@
 name,platform,file,sequence,vol_min,vol_max,dist_min,dist_max,limit_count,limit_type,entity_limit_count,entity_limit_type,bus,volume_min_falloff_curve,volumefalloffcurve,reverb_send,dist_reverb_max,reverb_min_falloff_curve,reverb_falloff_curve,pitch_min,pitch_max,randomize_type,spatialized,type,probability,loop,masterslave,loadspec,subtitle,compression,secondaryaliasname,chainaliasname,startdelay,speakermap,lfe percentage,center percentage,envelop_min,envelop_max,envelop percentage,occlusion_level,occlusion_wet_dry,real_delay,distance_lpf,move_type,move_time,min_priority,max_priority,min_priority_threshold,max_priority_threshold,,isbig
 ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 mx_nr_stones,,Stream\Music\Mission\zombie\mx_nr_stones.wav,,1,1,,,,,,,music,,,0,,,,,,,2d,streamed,,,,,,,,,,music_all,,,,,,0,,,,,,100,100,0.25,1,,
-mx_undone,,Stream\Music\Mission\zombie\mx_nr_stones.wav,,1,1,,,,,,,music,,,0,,,,,,,2d,streamed,,,,,,,,,,music_all,,,,,,0,,,,,,100,100,0.25,1,,
-mx_eggs,,Stream\Music\Mission\zombie\mx_nr_stones.wav,,1,1,,,,,,,music,,,0,,,,,,,2d,streamed,,,,,,,,,,music_all,,,,,,0,,,,,,100,100,0.25,1,,
+mx_game_over,,Stream\Music\Mission\zombie\mx_nr_stones.wav,,1,1,,,,,,,music,,,0,,,,,,,2d,streamed,,,,,,,,,,music_all,,,,,,0,,,,,,100,100,0.25,1,,
