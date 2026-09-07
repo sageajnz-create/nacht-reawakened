@@ -168,6 +168,10 @@ test_suite()
 
 // Exercise the live zombie damage listener with controlled bullet notifications.
 // This isolates the perk's additional damage from aim, penetration and hit location.
+empty_damage_func(type, loc, point, player)
+{
+}
+
 test_double_tap()
 {
     enemies = getaiarray("axis");
@@ -184,8 +188,13 @@ test_double_tap()
     enemy notify("damage", 25, self, (1,0,0), enemy.origin, "MOD_RIFLE_BULLET");
     wait 0.2;
     check(enemy.health == 975, "Double Tap adds one bullet of damage");
+    // Stock zombie_damage chips grenades with DoDamage(round + random). Stub it so this
+    // assert only measures Double Tap II (bullet-only extra damage in _gameskill).
+    old_damage_func = level.global_damage_func;
+    level.global_damage_func = maps\nr_debug::empty_damage_func;
     enemy notify("damage", 25, self, (1,0,0), enemy.origin, "MOD_GRENADE_SPLASH");
     wait 0.2;
+    level.global_damage_func = old_damage_func;
     check(enemy.health == 975, "Double Tap does not multiply explosive damage");
     enemy.health = 10;
     enemy notify("damage", 25, self, (1,0,0), enemy.origin, "MOD_RIFLE_BULLET");

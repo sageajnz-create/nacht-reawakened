@@ -2858,15 +2858,26 @@ auto_adjust_enemy_death_detection()
 	for ( ;; )
 	{
 		self waittill( "damage", amount, attacker, direction_vec, point, type );
-        // Double Tap II: apply an additional bullet's damage without another score event.
-        if (isdefined(level.nr_active) && isdefined(attacker) && isplayer(attacker) && isdefined(attacker.nr_perks) && isdefined(attacker.nr_perks["tap"]) && attacker.nr_perks["tap"] && isalive(self) && (type == "MOD_RIFLE_BULLET" || type == "MOD_PISTOL_BULLET"))
+        // Double Tap II: extra bullet damage only (not explosives/melee/fire).
+        if (isdefined(level.nr_active) && isdefined(attacker) && isplayer(attacker) && isdefined(attacker.nr_perks) && isdefined(attacker.nr_perks["tap"]) && attacker.nr_perks["tap"] && isalive(self))
         {
-            if (self.health > amount)
-                self.health -= amount;
-            else
+            is_bullet = false;
+            if (isdefined(type))
             {
-                self dodamage(amount, point, attacker);
-                wait 0.05;
+                if (type == "MOD_RIFLE_BULLET")
+                    is_bullet = true;
+                else if (type == "MOD_PISTOL_BULLET")
+                    is_bullet = true;
+            }
+            if (is_bullet)
+            {
+                if (self.health > amount)
+                    self.health -= amount;
+                else
+                {
+                    self dodamage(amount, point, attacker);
+                    wait 0.05;
+                }
             }
         }
 		aa_add_event( "aa_enemy_damage_taken", amount );

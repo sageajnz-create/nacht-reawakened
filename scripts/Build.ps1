@@ -12,6 +12,7 @@ $linkerArgs += 'mod'
 if ($LASTEXITCODE -ne 0) { Get-Content tools/build.log -Tail 25; throw "Link failed: $LASTEXITCODE" }
 $release = Join-Path $root 'dist/nacht_reawakened'
 [IO.Directory]::CreateDirectory($release) | Out-Null
+Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $iwd = Join-Path $release 'nacht_reawakened.iwd'
 $pendingIwd = Join-Path $root 'build/nacht_reawakened.pending.iwd'
