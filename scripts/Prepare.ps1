@@ -94,6 +94,10 @@ if (getdvar("nr_difficulty") != "classic")
     level.zombie_total = max;
 '@
 Write-Utf8 'src/maps/_zombiemode_prototype.gsc' $mode
+# EE owns the mx_game_over stream; keep death sting on round_over (Prepare regenerates this file).
+$modeFile = Get-Content 'src/maps/_zombiemode_prototype.gsc' -Raw
+$modeFile = $modeFile -replace 'add_sound\(\s*"end_of_game"\s*,\s*"mx_game_over"\s*\);', 'add_sound( "end_of_game", "round_over" ); // EE owns mx_game_over stream'
+Write-Utf8 'src/maps/_zombiemode_prototype.gsc' $modeFile
 
 $powerups = Get-Content stock/nacht/maps/_zombiemode_powerups.gsc -Raw
 $needle = 'add_zombie_powerup( "full_ammo",  "zombie_ammocan", &"ZOMBIE_POWERUP_MAX_AMMO");'

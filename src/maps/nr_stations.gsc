@@ -126,10 +126,10 @@ purchase(station)
         {
             level.nr_eggs_playing = true;
             level.eggs = 1;
-            // Force a transition even if client thinks we are already in eggs
-            level.musicState = "SILENT";
+            // Hard-stop WAVE_1 on the client first (fake musicState skip left wave fading under Stones).
+            setmusicstate("SILENT");
+            wait(0.15);
             setmusicstate("eggs");
-            self playsound("chalk");
             iprintlnbold("^3STONES & CHEESE^7 | Reggae forever");
             println("NR: EGGS music start");
         }
@@ -137,8 +137,6 @@ purchase(station)
         {
             level.nr_eggs_playing = false;
             level.eggs = 0;
-            // Force client musicCmd even if musicState already SILENT
-            level.musicState = "eggs";
             setmusicstate("SILENT");
             iprintlnbold("^3RADIO OFF^7");
             println("NR: EGGS music stop");
