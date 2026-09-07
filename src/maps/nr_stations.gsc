@@ -27,7 +27,7 @@ init()
     add("pack", "PACK-A-PUNCH", 5000, (560, 900, 160), 0, "zombie_vending_packapunch_on", (0.5,0.8,1));
     add("power", "RESTORE POWER", 0, (430, 1020, 200), 5, "zombie_power_lever", (1,0.8,0.35));
     add("relay_a", "STARTING ROOM RELAY", 0, (200, -380, 48), 90, "zombie_power_lever", (1,0.8,0.35));
-    add("relay_b", "HELP ROOM RELAY", 0, (1020, 875, 48), 180, "zombie_power_lever", (1,0.8,0.35));
+    add("relay_b", "HELP ROOM RELAY", 0, (1000, 790, 40), 180, "zombie_power_lever", (1,0.8,0.35));
     add("eggs", "STONES & CHEESE", 0, (130, -378, 4), 180, "static_berlin_ger_radio", (0.45,1,0.35));
 }
 

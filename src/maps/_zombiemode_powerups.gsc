@@ -169,7 +169,11 @@ powerup_drop(drop_point)
 	// never drop unless in the playable area
 	playable_area = getentarray("playable_area","targetname");
 	
-	powerup = spawn ("script_model", drop_point + (0,0,40));
+	trace = bullettrace( drop_point + (0,0,80), drop_point + (0,0,-1000), false, undefined );
+	drop_origin = drop_point + (0,0,40);
+	if ( isdefined( trace ) && isdefined( trace["position"] ) && trace["fraction"] < 1 )
+		drop_origin = trace["position"] + (0,0,40);
+	powerup = spawn ("script_model", drop_origin);
 	
 	for (i = 0; i < playable_area.size; i++)
 	{

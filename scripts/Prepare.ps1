@@ -108,6 +108,8 @@ $powerups = $rx.Replace($powerups, '$0' + "`n`tadd_zombie_powerup( `"bonus_point
 $powerups = Replace-Once $powerups 'players[i] GiveMaxAmmo( primaryWeapons[x] );' "players[i] GiveMaxAmmo( primaryWeapons[x] );`n`t`t`tplayers[i] SetWeaponAmmoClip(primaryWeapons[x], WeaponClipSize(primaryWeapons[x]));"
 $powerups = Replace-Once $powerups 'level.zombie_vars["zombie_point_scalar"] *= 2;' 'level.zombie_vars["zombie_point_scalar"] = 2;'
 $powerups = Replace-Once $powerups 'case "nuke":' "case `"bonus_points`":`n`t`t`t`t`t`t`tlevel maps\nr_powerups::bonus();`n`t`t`t`t`t`t`tbreak;`n`t`t`t`t`t`tcase `"nuke`":"
+# Ground-snap powerup drops so window/ledge kills do not float.
+$powerups = Replace-Once $powerups 'powerup = spawn ("script_model", drop_point + (0,0,40));' "trace = bullettrace( drop_point + (0,0,80), drop_point + (0,0,-1000), false, undefined );`n`tdrop_origin = drop_point + (0,0,40);`n`tif ( isdefined( trace ) && isdefined( trace[`"position`"] ) && trace[`"fraction`"] < 1 )`n`t`tdrop_origin = trace[`"position`"] + (0,0,40);`n`tpowerup = spawn (`"script_model`", drop_origin);"
 Write-Utf8 'src/maps/_zombiemode_powerups.gsc' $powerups
 
 $upgrades = [ordered]@{
