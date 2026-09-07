@@ -19,12 +19,16 @@ foreach ($name in $files) {
     }
 }
 [IO.Directory]::CreateDirectory($target) | Out-Null
-# Loose sound/ files shadow IWD streams (e.g. stock mx_undone.wav beat Stones). Always wipe.
+# Wipe any prior loose streams, then deploy Stones as mx_game_over (loose wins over IWD/FF).
 $looseSound = Join-Path $target 'sound'
 if (Test-Path -LiteralPath $looseSound) {
     Remove-Item -LiteralPath $looseSound -Recurse -Force
-    Write-Output "Removed loose sound/ that would shadow IWD streams"
 }
+$song = Join-Path $root 'src/sound/Stream/Music/Mission/zombie/mx_nr_stones.wav'
+if (!(Test-Path -LiteralPath $song)) { throw "Missing Stones stream: $song" }
+$dest = Join-Path $target 'sound/Stream/Music/Mission/zombie/mx_game_over.wav'
+[IO.Directory]::CreateDirectory((Split-Path $dest)) | Out-Null
+Copy-Item -LiteralPath $song -Destination $dest -Force
 foreach ($name in $files) {
     $from = Join-Path $release $name
     $to = Join-Path $target $name
@@ -34,4 +38,5 @@ foreach ($name in $files) {
     }
 }
 Write-Output "Installed and verified: $target"
+Write-Output "Deployed loose Stones override: $dest"
 if (Test-Path -LiteralPath $backup) { Write-Output "Previous installed release: $backup" }
