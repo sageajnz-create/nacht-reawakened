@@ -126,8 +126,7 @@ purchase(station)
         {
             level.nr_eggs_playing = true;
             level.eggs = 1;
-            // Retail loads stock map amb CSC (no eggs/SILENT). Developer/devmap can load ours.
-            // Play Stones via sound alias so normal mods-menu launches work without eggs musicState.
+            // Duck round music when our amb CSC is active (developer / override).
             setmusicstate("SILENT");
             wait(0.15);
             if (isdefined(level.nr_eggs_ent))
@@ -135,11 +134,16 @@ purchase(station)
                 level.nr_eggs_ent stopsounds();
                 level.nr_eggs_ent delete();
             }
-            level.nr_eggs_ent = spawn("script_origin", (0, 0, 0));
-            // mx_nr_stones is shipped in the mod IWD soundaliases CSV + stream.
-            level.nr_eggs_ent playsound("mx_nr_stones");
+            // Retail: stock mx_game_over alias + loose/IWD Stones stream. playlocalsound is 2D and
+            // works without the eggs musicState that only loads under developer/devmap.
+            players = get_players();
+            for (pi = 0; pi < players.size; pi++)
+                players[pi] playlocalsound("mx_game_over");
+            level.nr_eggs_ent = spawn("script_origin", station.origin);
+            level.nr_eggs_ent playsound("mx_game_over");
+            setmusicstate("eggs");
             iprintlnbold("^3STONES & CHEESE^7 | Reggae forever");
-            println("NR: EGGS music start (playsound mx_nr_stones)");
+            println("NR: EGGS music start (playlocalsound mx_game_over)");
         }
         else
         {

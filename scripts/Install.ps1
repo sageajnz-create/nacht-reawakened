@@ -26,9 +26,12 @@ if (Test-Path -LiteralPath $looseSound) {
 }
 $song = Join-Path $root 'src/sound/Stream/Music/Mission/zombie/mx_nr_stones.wav'
 if (!(Test-Path -LiteralPath $song)) { throw "Missing Stones stream: $song" }
-$dest = Join-Path $target 'sound/Stream/Music/Mission/zombie/mx_game_over.wav'
-[IO.Directory]::CreateDirectory((Split-Path $dest)) | Out-Null
-Copy-Item -LiteralPath $song -Destination $dest -Force
+$streamDir = Join-Path $target 'sound/Stream/Music/Mission/zombie'
+[IO.Directory]::CreateDirectory($streamDir) | Out-Null
+foreach ($name in @('mx_game_over.wav', 'mx_nr_stones.wav')) {
+    Copy-Item -LiteralPath $song -Destination (Join-Path $streamDir $name) -Force
+}
+$dest = Join-Path $streamDir 'mx_game_over.wav'
 foreach ($name in $files) {
     $from = Join-Path $release $name
     $to = Join-Path $target $name
