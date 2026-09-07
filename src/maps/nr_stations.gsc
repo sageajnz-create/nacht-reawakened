@@ -12,6 +12,7 @@ precache_assets()
     precachemodel("zombie_power_lever_handle");
     precachemodel("zombie_perk_bottle_sleight");
     precachemodel("static_berlin_ger_radio");
+    precachemodel("static_peleliu_filecabinet_metal");
     precacheshader("nr_stones_and_cheese");
 }
 
@@ -21,9 +22,9 @@ init()
     level.nr_eggs_playing = false;
     add("revive", "QUICK REVIVE", 500, (-200, 55, 8), 90, "zombie_vending_revive_on", (0.25,0.65,1));
     add("jug", "JUGGERNOG", 2500, (970, 640, 8), 180, "zombie_vending_jugg_on", (1,0.22,0.16));
-    add("speed", "SPEED COLA", 3000, (785, 1015, 8), 180, "zombie_vending_sleight_on", (0.3,1,0.45));
+    add("speed", "SPEED COLA", 3000, (850, 1015, 8), 0, "zombie_vending_sleight_on", (0.3,1,0.45));
     add("tap", "DOUBLE TAP II", 2000, (1020, 780, 160), 270, "zombie_vending_doubletap_on", (1,0.65,0.15));
-    add("stamina", "STAMIN-UP", 2000, (-220, 800, 160), 95, "zombie_vending_doubletap_on", (1,0.9,0.3));
+    add("stamina", "STAMIN-UP", 2000, (-220, 800, 160), 95, "static_peleliu_filecabinet_metal", (1,0.9,0.3));
     add("pack", "PACK-A-PUNCH", 5000, (620, 1000, 148), 0, "zombie_vending_packapunch_on", (0.5,0.8,1));
     add("power", "RESTORE POWER", 0, (395, 1000, 168), 0, "zombie_power_lever", (1,0.8,0.35));
     add("relay_a", "STARTING ROOM RELAY", 0, (200, -380, 48), 90, "zombie_power_lever", (1,0.8,0.35));
