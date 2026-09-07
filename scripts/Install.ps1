@@ -19,6 +19,12 @@ foreach ($name in $files) {
     }
 }
 [IO.Directory]::CreateDirectory($target) | Out-Null
+# Loose sound/ files shadow IWD streams (e.g. stock mx_undone.wav beat Stones). Always wipe.
+$looseSound = Join-Path $target 'sound'
+if (Test-Path -LiteralPath $looseSound) {
+    Remove-Item -LiteralPath $looseSound -Recurse -Force
+    Write-Output "Removed loose sound/ that would shadow IWD streams"
+}
 foreach ($name in $files) {
     $from = Join-Path $release $name
     $to = Join-Path $target $name
