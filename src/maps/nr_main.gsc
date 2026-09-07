@@ -19,6 +19,7 @@ init()
     if (getdvar("nr_difficulty") == "")
         setdvar("nr_difficulty", "modern");
     maps\nr_stations::init();
+    maps\nr_weapons::register_upgraded_wall_weapons();
     level thread players_watch();
     println("NR: Nacht Reawakened initialized");
 }
