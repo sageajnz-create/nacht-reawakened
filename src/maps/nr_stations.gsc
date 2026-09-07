@@ -21,7 +21,7 @@ init()
     level.nr_eggs_playing = false;
     add("revive", "QUICK REVIVE", 500, (-200, 55, 8), 90, "zombie_vending_revive_on", (0.25,0.65,1));
     add("jug", "JUGGERNOG", 2500, (970, 640, 8), 180, "zombie_vending_jugg_on", (1,0.22,0.16));
-    add("speed", "SPEED COLA", 3000, (820, 1030, 8), 270, "zombie_vending_sleight_on", (0.3,1,0.45));
+    add("speed", "SPEED COLA", 3000, (760, 990, 8), 270, "zombie_vending_sleight_on", (0.3,1,0.45));
     add("tap", "DOUBLE TAP II", 2000, (1020, 780, 160), 270, "zombie_vending_doubletap_on", (1,0.65,0.15));
     add("stamina", "STAMIN-UP", 2000, (-220, 800, 160), 95, "zombie_vending_sleight_on", (1,0.9,0.3));
     add("pack", "PACK-A-PUNCH", 5000, (620, 1000, 148), 0, "zombie_vending_packapunch_on", (0.5,0.8,1));
