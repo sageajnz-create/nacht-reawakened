@@ -127,7 +127,10 @@ purchase(station)
     }
     if (id == "eggs")
     {
-        maps\nr_radio::toggle(station.origin);
+        if (level.nr_eggs_playing)
+            maps\nr_radio::stop();
+        else
+            maps\nr_radio::start(station);
         return;
     }
     if (id == "relay_a" || id == "relay_b")

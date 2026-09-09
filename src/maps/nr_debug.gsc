@@ -138,7 +138,7 @@ test_suite()
     if (isdefined(eggs))
     {
         self maps\nr_stations::purchase(eggs);
-        check(level.nr_eggs_playing, "radio starts Stones & Cheese");
+        check(maps\nr_radio::verify(), "radio starts Stones & Cheese");
         self maps\nr_stations::purchase(eggs);
         check(!level.nr_eggs_playing, "radio stops Stones & Cheese");
     }
