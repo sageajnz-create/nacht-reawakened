@@ -7,6 +7,11 @@ $target = Join-Path $root 'runtime/mods/nacht_reawakened'
 [IO.Directory]::CreateDirectory($target) | Out-Null
 Copy-Item (Join-Path $root 'dist/nacht_reawakened/mod.ff') (Join-Path $target 'mod.ff') -Force
 Copy-Item (Join-Path $root 'dist/nacht_reawakened/nacht_reawakened.iwd') (Join-Path $target 'nacht_reawakened.iwd') -Force
+$radioFf = Join-Path $root 'dist/nacht_reawakened/nr_radio.ff'
+if (Test-Path -LiteralPath $radioFf) {
+    Copy-Item -LiteralPath $radioFf -Destination (Join-Path $target 'nr_radio.ff') -Force
+}
+& "$PSScriptRoot/Deploy-StonesStream.ps1" -TargetModDir $target
 $args = '+set fs_homepath "' + (Join-Path $root 'runtime') + '" +set fs_game mods/nacht_reawakened +set snd_volume 0 +set r_fullscreen 0 +set r_mode 1280x720 +set developer 1 +set logfile 2 +set g_log nr-tests.log +set com_introPlayed 1'
 if ($AutoTest) { $args += ' +set nr_autotest 1' } else { $args += ' +set nr_autotest 0' }
 $args += ' +devmap nazi_zombie_prototype'

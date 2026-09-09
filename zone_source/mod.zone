@@ -8,6 +8,7 @@ xmodel,zombie_power_lever
 xmodel,zombie_power_lever_handle
 xmodel,zombie_perk_bottle_sleight
 xmodel,static_berlin_ger_radio
+sound,mx_nr_stones
 material,nr_stones_and_cheese
 material,specialty_juggernaut_zombies
 material,specialty_fastreload_zombies
@@ -49,6 +50,7 @@ rawfile,maps/nr_hud.gsc
 rawfile,maps/nr_main.gsc
 rawfile,maps/nr_perks.gsc
 rawfile,maps/nr_powerups.gsc
+rawfile,maps/nr_radio.gsc
 rawfile,maps/nr_stations.gsc
 rawfile,maps/nr_weapon_table.gsc
 rawfile,maps/nr_weapons.gsc

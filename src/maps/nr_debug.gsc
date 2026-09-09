@@ -128,6 +128,20 @@ test_suite()
     before = self.score;
     level maps\nr_powerups::bonus();
     check(self.score == before+500, "Bonus Points reward");
+    eggs = undefined;
+    for (s = 0; s < level.nr_stations.size; s++)
+    {
+        if (level.nr_stations[s].id == "eggs")
+            eggs = level.nr_stations[s];
+    }
+    check(isdefined(eggs), "radio station spawned downstairs");
+    if (isdefined(eggs))
+    {
+        self maps\nr_stations::purchase(eggs);
+        check(level.nr_eggs_playing, "radio starts Stones & Cheese");
+        self maps\nr_stations::purchase(eggs);
+        check(!level.nr_eggs_playing, "radio stops Stones & Cheese");
+    }
     self test_all_upgrades();
     self test_double_tap();
     self.health = 200;

@@ -18,6 +18,7 @@ init()
         setdvar("nr_fov",85);
     if (getdvar("nr_difficulty") == "")
         setdvar("nr_difficulty", "modern");
+    maps\nr_radio::init();
     maps\nr_stations::init();
     maps\nr_weapons::register_upgraded_wall_weapons();
     level thread players_watch();
@@ -79,7 +80,7 @@ facing_station(station)
         return true;
     forward = anglesToForward(self getplayerangles());
     forward = (forward[0], forward[1], 0);
-    // ~50 degree view cone
+    // ~50 degree view cone; radio poster uses this, purchase does not.
     return VectorDot(VectorNormalize(forward), VectorNormalize(to)) > 0.64;
 }
 
@@ -105,7 +106,10 @@ interactions()
             if (self usebuttonpressed() && !latched)
             {
                 held += 0.1;
-                if (held >= 0.7)
+                need = 0.7;
+                if (station.id == "eggs")
+                    need = 0.25;
+                if (held >= need)
                 {
                     latched = true;
                     self maps\nr_stations::purchase(station);

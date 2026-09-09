@@ -1,5 +1,4 @@
 #include maps\_utility;
-#include maps\_music;
 
 precache_assets()
 {
@@ -19,7 +18,6 @@ precache_assets()
 init()
 {
     level.nr_stations = [];
-    level.nr_eggs_playing = false;
     add("revive", "QUICK REVIVE", 125, (-200, 55, 8), 90, "zombie_vending_revive_on", (0.25,0.65,1));
     add("jug", "JUGGERNOG", 625, (970, 640, 8), 180, "zombie_vending_jugg_on", (1,0.22,0.16));
     add("speed", "SPEED COLA", 750, (850, 1015, 8), 0, "zombie_vending_sleight_on", (0.3,1,0.45));
@@ -57,18 +55,25 @@ add(id, label, cost, origin, yaw, model, color)
 nearest(player)
 {
     best = undefined;
-    bestdist = 105;
+    bestdist = 140;
     for (i = 0; i < level.nr_stations.size; i++)
     {
         station = level.nr_stations[i];
         if (abs(player.origin[2] - station.origin[2]) > 65)
             continue;
+        reach = 105;
+        if (station.id == "eggs")
+            reach = 140;
         d = distance2d(player.origin, station.origin);
-        if (d < bestdist)
+        if (d < bestdist && d < reach)
         {
-            trace = bullettrace(player geteye(), station.origin + (0,0,35), false, player);
-            if (trace["fraction"] < 0.85)
-                continue;
+            // Radio sits against a wall; a vis-trace from eye to origin often fails.
+            if (station.id != "eggs")
+            {
+                trace = bullettrace(player geteye(), station.origin + (0,0,35), false, player);
+                if (trace["fraction"] < 0.85)
+                    continue;
+            }
             best = station;
             bestdist = d;
         }
@@ -86,8 +91,8 @@ hint(station)
     if (id == "eggs")
     {
         if (level.nr_eggs_playing)
-            return "Hold USE | Stop Stones & Cheese";
-        return "Hold USE | Stones & Cheese";
+            return "USE | Stop Stones & Cheese";
+        return "USE | Stones & Cheese";
     }
     if (id == "pack" && level.nr_relays < 2)
         return "PACK-A-PUNCH | Activate both downstairs relays";
@@ -122,45 +127,7 @@ purchase(station)
     }
     if (id == "eggs")
     {
-        if (!level.nr_eggs_playing)
-        {
-            level.nr_eggs_playing = true;
-            level.eggs = 1;
-            // Duck round music when our amb CSC is active (developer / override).
-            setmusicstate("SILENT");
-            wait(0.15);
-            if (isdefined(level.nr_eggs_ent))
-            {
-                level.nr_eggs_ent stopsounds();
-                level.nr_eggs_ent delete();
-            }
-            // Retail: stock mx_game_over alias + loose/IWD Stones stream. playlocalsound is 2D and
-            // works without the eggs musicState that only loads under developer/devmap.
-            players = get_players();
-            for (pi = 0; pi < players.size; pi++)
-                players[pi] playlocalsound("mx_game_over");
-            level.nr_eggs_ent = spawn("script_origin", station.origin);
-            level.nr_eggs_ent playsound("mx_game_over");
-            setmusicstate("eggs");
-            iprintlnbold("^3STONES & CHEESE^7 | Reggae forever");
-            println("NR: EGGS music start (playlocalsound mx_game_over)");
-        }
-        else
-        {
-            level.nr_eggs_playing = false;
-            level.eggs = 0;
-            if (isdefined(level.nr_eggs_ent))
-            {
-                level.nr_eggs_ent stopsounds();
-                level.nr_eggs_ent delete();
-                level.nr_eggs_ent = undefined;
-            }
-            setmusicstate("SILENT");
-            wait(0.05);
-            setmusicstate("WAVE_1");
-            iprintlnbold("^3RADIO OFF^7");
-            println("NR: EGGS music stop");
-        }
+        maps\nr_radio::toggle(station.origin);
         return;
     }
     if (id == "relay_a" || id == "relay_b")

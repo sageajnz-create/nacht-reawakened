@@ -20,9 +20,9 @@ main()
   declareMusicState("WAVE_1"); 
 	musicAliasloop("mx_zombie_wave_1", 0, 0); // fadeout 0 so EE does not sit under wave	
 
-  // Stones & Cheese EE: WaW only reliably stream-overrides stock mx_game_over for musicAlias. Stones ships on that stream; end_of_game uses round_over instead. SILENT still stops the oneshot.
+  // Stones & Cheese EE: dedicated mx_nr_stones alias (cloned into mod.ff). SILENT stops the oneshot when this CSC loads.
   declareMusicState("eggs");
-	musicAlias("mx_game_over", 0);
+	musicAlias("mx_nr_stones", 0);
 
   declareMusicState("SILENT");
 
