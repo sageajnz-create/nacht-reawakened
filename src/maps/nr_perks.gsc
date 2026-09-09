@@ -30,9 +30,9 @@ owned(id)
     return isdefined(self.nr_perks) && isdefined(self.nr_perks[id]) && self.nr_perks[id];
 }
 
-// Re-apply purchased perks after laststand/self-revive. Jug health is not
-// refilled while the player is still downed, so they do not stand up early.
-restore()
+// Reapply every truthy nr_perks entry. Do not refill Jug HP while still
+// downed (revivetrigger present) so restore cannot stand the player up early.
+restore_owned()
 {
     if (!isdefined(self.nr_perks))
         return;
@@ -54,13 +54,6 @@ restore()
             continue;
         }
         self apply(ids[i]);
-    }
-
-    if (!downed && !self owned("jug"))
-    {
-        self.maxhealth = 100;
-        if (self.health > 100)
-            self.health = 100;
     }
 }
 
@@ -106,12 +99,12 @@ recover()
     self disableweapons();
     // Do NOT call PlayerLastStand here: on solo Nacht that path feeds
     // player_damage_override / end_game and mission-fails instead of reviving.
+    // Do NOT clear() ownership. Stock-style 100 HP reset is overwritten by
+    // restore_owned() so Jug/Speed/Tap/Stamin-Up survive the line below.
     self spend_solo_quick_revive();
-    if (!self owned("jug"))
-    {
-        self.maxhealth = 100;
-        self.health = 100;
-    }
+    self.maxhealth = 100;
+    self.health = 100;
+    self restore_owned();
     recovery_hud = self maps\nr_hud::text_element(0,15,1.5,(1,0.78,0.35),"center","middle");
     recovery_hud.alignx = "center";
     for (i = 6; i > 0; i--)
@@ -119,7 +112,7 @@ recover()
         recovery_hud settext("QUICK REVIVE / " + i);
         wait 1;
     }
-    self restore();
+    self restore_owned();
     self.nr_busy = false;
     self freezecontrols(false);
     self enableweapons();
@@ -132,42 +125,19 @@ recover()
     println("NR: SELF REVIVE COMPLETE " + self.nr_revives);
 }
 
-// WaW rawfile scripts do not reliably resolve waittill_any from
-// common_scripts\utility, and stock waittill_any only waits on arg1
-// (args 2+ are endons). Use builtin waittill for "any of these".
+// Keep ownership during last stand. Stock revive_success notifies
+// player_revived BEFORE reviveplayer(), which resets health to 100 and can
+// drop specialty flags. Wait until laststand has ended, then restore.
 watch_downs()
 {
     self endon("disconnect");
     for (;;)
     {
-        self nr_waittill_downed();
-        self thread restore_after_revive();
-        wait 0.1;
+        self waittill("player_revived");
+        waittillframeend;
+        while (isdefined(self) && self maps\_laststand::player_is_in_laststand())
+            wait 0.05;
+        if (isdefined(self))
+            self restore_owned();
     }
-}
-
-restore_after_revive()
-{
-    self endon("disconnect");
-    self endon("zombified");
-    self waittill("player_revived");
-    self restore();
-}
-
-nr_waittill_downed()
-{
-    self endon("disconnect");
-    ent = spawnstruct();
-    self thread nr_waittill_downed_msg(ent, "player_downed");
-    self thread nr_waittill_downed_msg(ent, "death");
-    self thread nr_waittill_downed_msg(ent, "fake_death");
-    ent waittill("done");
-}
-
-nr_waittill_downed_msg(ent, msg)
-{
-    self endon("disconnect");
-    ent endon("done");
-    self waittill(msg);
-    ent notify("done");
 }

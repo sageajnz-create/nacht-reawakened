@@ -133,9 +133,6 @@ PlayerLastStand( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
 	// bleed out timer
 	self thread laststand_bleedout( GetDvarFloat( "player_lastStandBleedoutTime" ) );
 	
-	if (isdefined(level.nr_active) && level.nr_active)
-		self notify( "player_downed" );
-
 	if ( maps\_collectibles::has_collectible( "collectible_sticksstones" ) )
 	{
 		self notify( "player_downed" );
@@ -671,7 +668,7 @@ revive_success( reviver )
 	self.ignoreme = false;
 
 	if (isdefined(level.nr_active) && level.nr_active)
-		self maps\nr_perks::restore();
+		self maps\nr_perks::restore_owned();
 }
 
 

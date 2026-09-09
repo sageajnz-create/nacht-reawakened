@@ -186,12 +186,12 @@ test_perk_restore_after_teammate_revive()
     self.health = 1;
     self.maxhealth = 250;
     self.revivetrigger = spawn("script_origin", self.origin);
-    self maps\nr_perks::restore();
+    self maps\nr_perks::restore_owned();
     check(self.health == 1 && self.maxhealth == 250, "Jug does not refill health while downed");
     check(self hasperk("specialty_fastreload") && self hasperk("specialty_rof") && self hasperk("specialty_longersprint") && self hasperk("specialty_quickrevive"), "engine perks stay applied while downed");
     self.revivetrigger delete();
     self.revivetrigger = undefined;
-    self maps\nr_perks::restore();
+    self maps\nr_perks::restore_owned();
     check(self.maxhealth == 250 && self.health == 250, "Jug health restored after teammate revive");
     check(self hasperk("specialty_fastreload") && self hasperk("specialty_rof") && self hasperk("specialty_longersprint"), "Speed Cola, Double Tap, and Stamin-Up restored after teammate revive");
     check(self maps\nr_perks::owned("revive") && self hasperk("specialty_quickrevive"), "Quick Revive restored after teammate revive");
