@@ -25,26 +25,53 @@ apply(id)
     }
 }
 
-clear()
+owned(id)
 {
-    // Solo Quick Revive is a 3-charge perk: keep it through downs until spent.
-    keep_revive = false;
-    if (get_players().size == 1 && isdefined(self.nr_perks["revive"]) && self.nr_perks["revive"] && self.nr_revives < 3)
-        keep_revive = true;
+    return isdefined(self.nr_perks) && isdefined(self.nr_perks[id]) && self.nr_perks[id];
+}
 
-    self.nr_perks = [];
-    self unsetperk("specialty_fastreload");
-    self unsetperk("specialty_rof");
-    self unsetperk("specialty_quickrevive");
-    self unsetperk("specialty_longersprint");
-    self setmovespeedscale(1);
-    self.maxhealth = 100;
+// Re-apply purchased perks after laststand/self-revive. Jug health is not
+// refilled while the player is still downed, so they do not stand up early.
+restore()
+{
+    if (!isdefined(self.nr_perks))
+        return;
 
-    if (keep_revive)
+    downed = self maps\_laststand::player_is_in_laststand();
+    ids = [];
+    ids[0] = "jug";
+    ids[1] = "speed";
+    ids[2] = "tap";
+    ids[3] = "revive";
+    ids[4] = "stamina";
+    for (i = 0; i < ids.size; i++)
     {
-        self.nr_perks["revive"] = true;
-        self setperk("specialty_quickrevive");
+        if (!self owned(ids[i]))
+            continue;
+        if (ids[i] == "jug" && downed)
+        {
+            self.maxhealth = 250;
+            continue;
+        }
+        self apply(ids[i]);
     }
+
+    if (!downed && !self owned("jug"))
+    {
+        self.maxhealth = 100;
+        if (self.health > 100)
+            self.health = 100;
+    }
+}
+
+// Solo Quick Revive is a 3-charge perk. Other purchased perks are never
+// stripped on down; only QR is spent after the third self-revive.
+spend_solo_quick_revive()
+{
+    if (get_players().size != 1 || self.nr_revives < 3 || !self owned("revive"))
+        return;
+    self.nr_perks["revive"] = false;
+    self unsetperk("specialty_quickrevive");
 }
 
 // Called before the stock player damage handler; true means this hit is consumed.
@@ -58,7 +85,7 @@ intercept_damage(damage, means)
         return true;
     if (damage < self.health || means == "MOD_CRUSH" || means == "MOD_FALLING")
         return false;
-    if (get_players().size != 1 || !isdefined(self.nr_perks["revive"]) || !self.nr_perks["revive"])
+    if (get_players().size != 1 || !self owned("revive"))
         return false;
     if (self.nr_revives >= 3 || level.intermission)
         return false;
@@ -79,9 +106,12 @@ recover()
     self disableweapons();
     // Do NOT call PlayerLastStand here: on solo Nacht that path feeds
     // player_damage_override / end_game and mission-fails instead of reviving.
-    self clear();
-    self.maxhealth = 100;
-    self.health = 100;
+    self spend_solo_quick_revive();
+    if (!self owned("jug"))
+    {
+        self.maxhealth = 100;
+        self.health = 100;
+    }
     recovery_hud = self maps\nr_hud::text_element(0,15,1.5,(1,0.78,0.35),"center","middle");
     recovery_hud.alignx = "center";
     for (i = 6; i > 0; i--)
@@ -89,6 +119,7 @@ recover()
         recovery_hud settext("QUICK REVIVE / " + i);
         wait 1;
     }
+    self restore();
     self.nr_busy = false;
     self freezecontrols(false);
     self enableweapons();
@@ -110,9 +141,17 @@ watch_downs()
     for (;;)
     {
         self nr_waittill_downed();
-        self clear();
+        self thread restore_after_revive();
         wait 0.1;
     }
+}
+
+restore_after_revive()
+{
+    self endon("disconnect");
+    self endon("zombified");
+    self waittill("player_revived");
+    self restore();
 }
 
 nr_waittill_downed()
