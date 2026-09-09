@@ -25,26 +25,46 @@ apply(id)
     }
 }
 
-clear()
+owned(id)
 {
-    // Solo Quick Revive is a 3-charge perk: keep it through downs until spent.
-    keep_revive = false;
-    if (get_players().size == 1 && isdefined(self.nr_perks["revive"]) && self.nr_perks["revive"] && self.nr_revives < 3)
-        keep_revive = true;
+    return isdefined(self.nr_perks) && isdefined(self.nr_perks[id]) && self.nr_perks[id];
+}
 
-    self.nr_perks = [];
-    self unsetperk("specialty_fastreload");
-    self unsetperk("specialty_rof");
-    self unsetperk("specialty_quickrevive");
-    self unsetperk("specialty_longersprint");
-    self setmovespeedscale(1);
-    self.maxhealth = 100;
+// Reapply every truthy nr_perks entry. Do not refill Jug HP while still
+// downed (revivetrigger present) so restore cannot stand the player up early.
+restore_owned()
+{
+    if (!isdefined(self.nr_perks))
+        return;
 
-    if (keep_revive)
+    downed = self maps\_laststand::player_is_in_laststand();
+    ids = [];
+    ids[0] = "jug";
+    ids[1] = "speed";
+    ids[2] = "tap";
+    ids[3] = "revive";
+    ids[4] = "stamina";
+    for (i = 0; i < ids.size; i++)
     {
-        self.nr_perks["revive"] = true;
-        self setperk("specialty_quickrevive");
+        if (!self owned(ids[i]))
+            continue;
+        if (ids[i] == "jug" && downed)
+        {
+            self.maxhealth = 250;
+            continue;
+        }
+        self apply(ids[i]);
     }
+}
+
+// Solo Quick Revive is a 3-charge perk. Other purchased perks are never
+// stripped on down; only QR is spent after the third self-revive.
+spend_solo_quick_revive()
+{
+    if (get_players().size != 1 || self.nr_revives < 3 || !self owned("revive"))
+        return;
+    self.nr_perks["revive"] = false;
+    self unsetperk("specialty_quickrevive");
 }
 
 // Called before the stock player damage handler; true means this hit is consumed.
@@ -58,7 +78,7 @@ intercept_damage(damage, means)
         return true;
     if (damage < self.health || means == "MOD_CRUSH" || means == "MOD_FALLING")
         return false;
-    if (get_players().size != 1 || !isdefined(self.nr_perks["revive"]) || !self.nr_perks["revive"])
+    if (get_players().size != 1 || !self owned("revive"))
         return false;
     if (self.nr_revives >= 3 || level.intermission)
         return false;
@@ -79,9 +99,12 @@ recover()
     self disableweapons();
     // Do NOT call PlayerLastStand here: on solo Nacht that path feeds
     // player_damage_override / end_game and mission-fails instead of reviving.
-    self clear();
+    // Do NOT clear() ownership. Stock-style 100 HP reset is overwritten by
+    // restore_owned() so Jug/Speed/Tap/Stamin-Up survive the line below.
+    self spend_solo_quick_revive();
     self.maxhealth = 100;
     self.health = 100;
+    self restore_owned();
     recovery_hud = self maps\nr_hud::text_element(0,15,1.5,(1,0.78,0.35),"center","middle");
     recovery_hud.alignx = "center";
     for (i = 6; i > 0; i--)
@@ -89,6 +112,7 @@ recover()
         recovery_hud settext("QUICK REVIVE / " + i);
         wait 1;
     }
+    self restore_owned();
     self.nr_busy = false;
     self freezecontrols(false);
     self enableweapons();
@@ -101,34 +125,19 @@ recover()
     println("NR: SELF REVIVE COMPLETE " + self.nr_revives);
 }
 
-// WaW rawfile scripts do not reliably resolve waittill_any from
-// common_scripts\utility, and stock waittill_any only waits on arg1
-// (args 2+ are endons). Use builtin waittill for "any of these".
+// Keep ownership during last stand. Stock revive_success notifies
+// player_revived BEFORE reviveplayer(), which resets health to 100 and can
+// drop specialty flags. Wait until laststand has ended, then restore.
 watch_downs()
 {
     self endon("disconnect");
     for (;;)
     {
-        self nr_waittill_downed();
-        self clear();
-        wait 0.1;
+        self waittill("player_revived");
+        waittillframeend;
+        while (isdefined(self) && self maps\_laststand::player_is_in_laststand())
+            wait 0.05;
+        if (isdefined(self))
+            self restore_owned();
     }
-}
-
-nr_waittill_downed()
-{
-    self endon("disconnect");
-    ent = spawnstruct();
-    self thread nr_waittill_downed_msg(ent, "player_downed");
-    self thread nr_waittill_downed_msg(ent, "death");
-    self thread nr_waittill_downed_msg(ent, "fake_death");
-    ent waittill("done");
-}
-
-nr_waittill_downed_msg(ent, msg)
-{
-    self endon("disconnect");
-    ent endon("done");
-    self waittill(msg);
-    ent notify("done");
 }

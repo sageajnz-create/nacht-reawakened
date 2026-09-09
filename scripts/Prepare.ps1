@@ -19,11 +19,13 @@ Write-Utf8 'src/maps/nazi_zombie_prototype.gsc' $main
 $callback = Get-Content stock/common/maps/_callbackglobal.gsc -Raw
 $signature = 'Callback_PlayerDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, modelIndex, psOffsetTime )'
 $callback = Replace-Once $callback ($signature + "`r`n{") ($signature + "`r`n{`r`n`tif (self maps\nr_perks::intercept_damage(iDamage, sMeansOfDeath)) return;")
+$callback = Replace-Once $callback "self RevivePlayer(); " "self RevivePlayer(); `r`n`tif (isdefined(level.nr_active) && level.nr_active)`r`n`t`tself maps\nr_perks::restore_owned();"
 Write-Utf8 'src/maps/_callbackglobal.gsc' $callback
 
 $laststand = Get-Content stock/common/maps/_laststand.gsc -Raw
 $laststand = Replace-Once $laststand 'reviveTime = 3;' "reviveTime = 3;`n`tif (isdefined(level.nr_active) && self hasperk(`"specialty_quickrevive`")) reviveTime = 1.5;"
 $laststand = Replace-Once $laststand "revive_trigger_think()`r`n{" "revive_trigger_think()`r`n{`r`n`tself endon(`"player_revived`");"
+$laststand = Replace-Once $laststand "self laststand_giveback_player_weapons();`r`n`t`r`n`tself.ignoreme = false;" "self laststand_giveback_player_weapons();`r`n`t`r`n`tself.ignoreme = false;`r`n`r`n`tif (isdefined(level.nr_active) && level.nr_active)`r`n`t`tself maps\nr_perks::restore_owned();"
 Write-Utf8 'src/maps/_laststand.gsc' $laststand
 
 $skill = Get-Content stock/common/maps/_gameskill.gsc -Raw

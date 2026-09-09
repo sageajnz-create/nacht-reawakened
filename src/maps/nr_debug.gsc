@@ -135,6 +135,7 @@ test_suite()
     wait 8;
     setdvar("nr_regen_result", "health=" + self.health + " cap=" + self.maxhealth);
     check(self.health == 250 && self.maxhealth == 250, "Juggernog regenerates to its full health cap");
+    self test_perk_restore_after_teammate_revive();
     for (i = 0; i < 3; i++)
     {
         // One purchase supplies three charges; no repurchase between recoveries.
@@ -146,14 +147,19 @@ test_suite()
         check(self.nr_recovering, "solo lethal hit intercepted through damage callback");
         wait 9.1;
         check(self.nr_revives == i+1 && !self.nr_recovering && !isdefined(self.revivetrigger), "solo revive restores player");
-        check(!isdefined(self.nr_perks["jug"]) && self.maxhealth == 100, "non-revive perks lost on down");
+        check(self maps\nr_perks::owned("jug") && self.maxhealth == 250 && self.health == 250, "Juggernog persists after self-revive");
+        check(self hasperk("specialty_fastreload") && self hasperk("specialty_rof") && self hasperk("specialty_longersprint"), "Speed Cola, Double Tap, and Stamin-Up persist after self-revive");
+        if (i < 2)
+            check(self maps\nr_perks::owned("revive") && self hasperk("specialty_quickrevive"), "solo Quick Revive kept until charges spent");
+        else
+            check(!self maps\nr_perks::owned("revive"), "solo Quick Revive spent after third self-revive");
         check(self.score == before && !self.nr_busy && !self.ignoreme, "recovery releases player without an extra charge");
         self EnableInvulnerability();
         self.ignoreme = true;
     }
     before = self.score;
     self maps\nr_stations::purchase(level.nr_stations[0]);
-    check(self.score == before && !isdefined(self.nr_perks["revive"]), "three self-revives limit");
+    check(self.score == before && !self maps\nr_perks::owned("revive"), "three self-revives limit");
     check(!self maps\nr_perks::intercept_damage(300,"MOD_MELEE"), "normal death resumes after revive limit");
     self DisableInvulnerability();
     wait 1;
@@ -170,6 +176,25 @@ test_suite()
 // This isolates the perk's additional damage from aim, penetration and hit location.
 empty_damage_func(type, loc, point, player)
 {
+}
+
+// Laststand leaves health at 1 without stripping engine perks. Restore must
+// not refill Jug while downed, then must bring HP and HUD flags back on revive.
+test_perk_restore_after_teammate_revive()
+{
+    check(self maps\nr_perks::owned("jug") && self maps\nr_perks::owned("speed") && self maps\nr_perks::owned("tap") && self maps\nr_perks::owned("stamina") && self maps\nr_perks::owned("revive"), "all perks owned before teammate-revive restore");
+    self.health = 1;
+    self.maxhealth = 250;
+    self.revivetrigger = spawn("script_origin", self.origin);
+    self maps\nr_perks::restore_owned();
+    check(self.health == 1 && self.maxhealth == 250, "Jug does not refill health while downed");
+    check(self hasperk("specialty_fastreload") && self hasperk("specialty_rof") && self hasperk("specialty_longersprint") && self hasperk("specialty_quickrevive"), "engine perks stay applied while downed");
+    self.revivetrigger delete();
+    self.revivetrigger = undefined;
+    self maps\nr_perks::restore_owned();
+    check(self.maxhealth == 250 && self.health == 250, "Jug health restored after teammate revive");
+    check(self hasperk("specialty_fastreload") && self hasperk("specialty_rof") && self hasperk("specialty_longersprint"), "Speed Cola, Double Tap, and Stamin-Up restored after teammate revive");
+    check(self maps\nr_perks::owned("revive") && self hasperk("specialty_quickrevive"), "Quick Revive restored after teammate revive");
 }
 
 test_double_tap()

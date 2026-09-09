@@ -666,6 +666,9 @@ revive_success( reviver )
 	self laststand_giveback_player_weapons();
 	
 	self.ignoreme = false;
+
+	if (isdefined(level.nr_active) && level.nr_active)
+		self maps\nr_perks::restore_owned();
 }
 
 

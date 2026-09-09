@@ -555,6 +555,8 @@ Callback_RevivePlayer()
 {
 	self endon( "disconnect" ); 
 	self RevivePlayer(); 
+	if (isdefined(level.nr_active) && level.nr_active)
+		self maps\nr_perks::restore_owned();
 }
 
 
