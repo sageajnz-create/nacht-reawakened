@@ -1,8 +1,10 @@
 #include maps\_utility;
 #include maps\_music;
 
-// Stones & Cheese radio EE. Retail mods-menu does not load custom eggs musicState,
-// so this plays dedicated alias mx_nr_stones on a script_origin (cloned into mod.ff).
+// Stones & Cheese radio EE. Do not depend on mx_game_over. Primary path is
+// setmusicstate("eggs") with musicAlias(mx_nr_stones). Do not use SILENT here:
+// that music state has no alias and mutes the music bus the song lives on.
+// Server playsound + playlocalsound are 2D/positional fallbacks for retail.
 
 init()
 {
@@ -22,18 +24,24 @@ start(station)
     level.nr_eggs_playing = true;
     level.eggs = 1;
     level.nr_radio_previous_music = level.musicState;
-    setmusicstate("SILENT");
 
     origin = (0, 0, 0);
     if (isdefined(station) && isdefined(station.origin))
         origin = station.origin;
+
+    // Primary: clientscript eggs state streams mx_nr_stones (WAVE_1 fadeout is 0).
+    setmusicstate("eggs");
+
+    players = get_players();
+    for (i = 0; i < players.size; i++)
+        players[i] playlocalsound("mx_nr_stones");
 
     level.nr_eggs_ent = spawn("script_origin", origin);
     level.nr_eggs_ent playsound("mx_nr_stones", "nr_track_finished");
     level.nr_eggs_ent thread finish_track();
 
     iprintlnbold("^3STONES & CHEESE^7 | Reggae forever");
-    println("NR: EGGS music start (playsound mx_nr_stones)");
+    println("NR: EGGS music start (eggs state + playsound/playlocalsound mx_nr_stones)");
 }
 
 stop()

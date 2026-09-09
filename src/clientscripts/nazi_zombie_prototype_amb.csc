@@ -20,7 +20,7 @@ main()
   declareMusicState("WAVE_1"); 
 	musicAliasloop("mx_zombie_wave_1", 0, 0); // fadeout 0 so EE does not sit under wave	
 
-  // Stones & Cheese EE: dedicated mx_nr_stones alias (cloned into mod.ff). SILENT stops the oneshot when this CSC loads.
+  // Stones & Cheese EE: dedicated mx_nr_stones (cloned into mod.ff). WAVE_1 fadeout is 0 so eggs can take the music bus.
   declareMusicState("eggs");
 	musicAlias("mx_nr_stones", 0);
 
