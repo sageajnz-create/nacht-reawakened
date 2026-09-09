@@ -96,10 +96,6 @@ if (getdvar("nr_difficulty") != "classic")
     level.zombie_total = max;
 '@
 Write-Utf8 'src/maps/_zombiemode_prototype.gsc' $mode
-# EE owns the mx_game_over stream; keep death sting on round_over (Prepare regenerates this file).
-$modeFile = Get-Content 'src/maps/_zombiemode_prototype.gsc' -Raw
-$modeFile = $modeFile -replace 'add_sound\(\s*"end_of_game"\s*,\s*"mx_game_over"\s*\);', 'add_sound( "end_of_game", "round_over" ); // EE owns mx_game_over stream'
-Write-Utf8 'src/maps/_zombiemode_prototype.gsc' $modeFile
 
 $powerups = Get-Content stock/nacht/maps/_zombiemode_powerups.gsc -Raw
 $needle = 'add_zombie_powerup( "full_ammo",  "zombie_ammocan", &"ZOMBIE_POWERUP_MAX_AMMO");'
@@ -163,6 +159,7 @@ Write-Utf8 'src/maps/nr_weapon_table.gsc' $gsc
 $zone = @('>game,T4')
 foreach ($name in @('revive','jugg','sleight','doubletap','packapunch')) { $zone += "xmodel,zombie_vending_${name}_on" }
 $zone += 'xmodel,zombie_power_lever','xmodel,zombie_power_lever_handle','xmodel,zombie_perk_bottle_sleight','xmodel,static_berlin_ger_radio'
+$zone += 'sound,mx_nr_stones'
 $zone += 'material,nr_stones_and_cheese'
 foreach ($name in @('juggernaut','fastreload','doubletap','quickrevive')) { $zone += "material,specialty_${name}_zombies" }
 $zone += $weaponZones

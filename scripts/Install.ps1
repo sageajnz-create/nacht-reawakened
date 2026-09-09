@@ -1,4 +1,5 @@
 # Install the already-built release without rebuilding the tested assets.
+# Loose mx_nr_stones.wav is required for retail streamed playback; never wipe it.
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 if (Get-Process CoDWaW -ErrorAction SilentlyContinue) {
@@ -19,19 +20,6 @@ foreach ($name in $files) {
     }
 }
 [IO.Directory]::CreateDirectory($target) | Out-Null
-# Wipe any prior loose streams, then deploy Stones as mx_game_over (loose wins over IWD/FF).
-$looseSound = Join-Path $target 'sound'
-if (Test-Path -LiteralPath $looseSound) {
-    Remove-Item -LiteralPath $looseSound -Recurse -Force
-}
-$song = Join-Path $root 'src/sound/Stream/Music/Mission/zombie/mx_nr_stones.wav'
-if (!(Test-Path -LiteralPath $song)) { throw "Missing Stones stream: $song" }
-$streamDir = Join-Path $target 'sound/Stream/Music/Mission/zombie'
-[IO.Directory]::CreateDirectory($streamDir) | Out-Null
-foreach ($name in @('mx_game_over.wav', 'mx_nr_stones.wav')) {
-    Copy-Item -LiteralPath $song -Destination (Join-Path $streamDir $name) -Force
-}
-$dest = Join-Path $streamDir 'mx_game_over.wav'
 foreach ($name in $files) {
     $from = Join-Path $release $name
     $to = Join-Path $target $name
@@ -40,6 +28,11 @@ foreach ($name in $files) {
         throw "Installed file verification failed: $name. Previous files are in $backup"
     }
 }
+$radioFf = Join-Path $release 'nr_radio.ff'
+if (Test-Path -LiteralPath $radioFf) {
+    Copy-Item -LiteralPath $radioFf -Destination (Join-Path $target 'nr_radio.ff') -Force
+}
+# Required: copy loose dual-case Stones stream. Do not delete sound/Stream.
+& "$PSScriptRoot/Deploy-StonesStream.ps1" -TargetModDir $target
 Write-Output "Installed and verified: $target"
-Write-Output "Deployed loose Stones override: $dest"
 if (Test-Path -LiteralPath $backup) { Write-Output "Previous installed release: $backup" }

@@ -202,7 +202,7 @@ init_strings()
 init_sounds()
 {
 	add_sound( "end_of_round", "round_over" );
-	add_sound( "end_of_game", "round_over" ); // EE owns mx_game_over stream
+	add_sound( "end_of_game", "mx_game_over" );
 	add_sound( "chalk_one_up", "chalk" );
 	add_sound( "purchase", "cha_ching" );
 	add_sound( "no_purchase", "no_cha_ching" );
